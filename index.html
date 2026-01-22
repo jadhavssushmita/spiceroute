@@ -9,6 +9,7 @@
     <style>
         body { font-family: 'Outfit', sans-serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
 <body class="bg-[#fdfcfb] text-stone-900">
@@ -42,17 +43,24 @@
 
 <main class="container mx-auto px-4 py-12 max-w-4xl">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100">
-            <div class="h-40 bg-orange-50 rounded-3xl mb-6 flex items-center justify-center text-5xl">🔥</div>
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-stone-100 flex flex-col">
+            <div class="h-64 bg-stone-100 rounded-3xl mb-6 overflow-hidden">
+                <img src="garam-masala.jpg" alt="Garam Masala" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-full text-5xl\'>🔥</div>'">
+            </div>
             <h3 class="text-xl font-extrabold">Aai’s Garam Masala (750 gm)</h3>
+            <p class="text-sm text-stone-500 mt-1">Authentic, hand-pounded aromatic blend.</p>
             <p class="text-3xl font-black text-stone-900 my-4">₹950</p>
-            <button onclick="addToCart('Garam Masala', 950)" class="w-full bg-stone-900 text-white py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all">Add to Cart</button>
+            <button onclick="addToCart('Garam Masala', 950)" class="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold hover:bg-orange-600 transition-all">Add to Cart</button>
         </div>
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100">
-            <div class="h-40 bg-yellow-50 rounded-3xl mb-6 flex items-center justify-center text-5xl">✨</div>
+
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-stone-100 flex flex-col">
+            <div class="h-64 bg-stone-100 rounded-3xl mb-6 overflow-hidden">
+                <img src="everyday-magic.jpg" alt="Everyday Magic" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-full text-5xl\'>✨</div>'">
+            </div>
             <h3 class="text-xl font-extrabold">Aai’s Everyday Magic (750 gm)</h3>
+            <p class="text-sm text-stone-500 mt-1">Our spicy "Ghar Ghar Special" all-rounder.</p>
             <p class="text-3xl font-black text-stone-900 my-4">₹1050</p>
-            <button onclick="addToCart('Special Masala', 1050)" class="w-full bg-stone-900 text-white py-3.5 rounded-2xl font-bold hover:bg-orange-600 transition-all">Add to Cart</button>
+            <button onclick="addToCart('Everyday Magic', 1050)" class="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold hover:bg-orange-600 transition-all">Add to Cart</button>
         </div>
     </div>
 </main>
@@ -67,19 +75,14 @@
             <input required id="cust-name" placeholder="Full Name" class="w-full p-4 bg-stone-50 border border-stone-100 rounded-2xl outline-none">
             <input required id="cust-addr" placeholder="Shipping Address" class="w-full p-4 bg-stone-50 border border-stone-100 rounded-2xl outline-none">
             
-            <button type="submit" class="w-full bg-green-600 text-white py-5 rounded-2xl font-bold text-lg shadow-lg uppercase">
-                Pay via GPay App
-            </button>
+            <button type="submit" class="w-full bg-green-600 text-white py-5 rounded-2xl font-bold text-lg shadow-lg uppercase">Pay via GPay App</button>
 
             <div class="relative py-2">
                 <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-stone-200"></span></div>
-                <div class="relative flex justify-center text-[10px] uppercase"><span class="bg-white px-2 text-stone-400">If GPay app shows an error</span></div>
+                <div class="relative flex justify-center text-[10px] uppercase"><span class="bg-white px-2 text-stone-400">Or use QR code</span></div>
             </div>
 
-            <button type="button" onclick="showPaymentQR()" class="w-full border-2 border-orange-500 text-orange-600 py-4 rounded-2xl font-bold hover:bg-orange-50 transition-all">
-                Show Payment QR Code
-            </button>
-            
+            <button type="button" onclick="showPaymentQR()" class="w-full border-2 border-orange-500 text-orange-600 py-4 rounded-2xl font-bold hover:bg-orange-50 transition-all">Show Payment QR Code</button>
             <button type="button" onclick="toggleCart()" class="w-full text-stone-400 text-xs font-bold uppercase py-2">Go Back</button>
         </form>
     </div>
@@ -87,13 +90,20 @@
 
 <div id="qr-modal" class="fixed inset-0 bg-stone-900/90 backdrop-blur-md hidden z-[200] flex items-center justify-center p-6">
     <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center">
-        <h3 class="text-xl font-bold mb-2">Scan to Pay</h3>
-        <p class="text-[11px] text-stone-500 mb-6 px-4">Take a screenshot of this QR and upload it in your GPay "Scan any QR" section.</p>
-        
-        <div id="qr-display" class="bg-stone-50 p-4 rounded-3xl mb-6 inline-block border border-stone-100">
-            </div>
+        <div id="qr-step-1">
+            <h3 class="text-xl font-bold mb-2">Scan & Pay</h3>
+            <p class="text-[11px] text-stone-500 mb-6 px-4">Scan using any UPI App</p>
+            <div id="qr-display" class="bg-stone-50 p-4 rounded-3xl mb-6 inline-block border border-stone-100"></div>
+            <button onclick="showTransactionInput()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-bold">I Have Paid</button>
+        </div>
 
-        <button onclick="closeQR()" class="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold">Done, I have Paid</button>
+        <div id="qr-step-2" class="hidden">
+            <h3 class="text-xl font-bold mb-2">Verification</h3>
+            <p class="text-[11px] text-stone-500 mb-6 px-4">Enter the 12-digit Transaction ID/UTR</p>
+            <input id="utr-input" type="number" placeholder="Enter Transaction ID" class="w-full p-4 bg-stone-100 rounded-2xl text-center font-bold mb-4 outline-none border-2 border-orange-100 focus:border-orange-500">
+            <button onclick="validateAndCloseQR()" class="w-full bg-stone-900 text-white py-4 rounded-2xl font-bold">Submit Order</button>
+        </div>
+        <button onclick="closeQRModal()" class="w-full text-stone-400 text-xs font-bold uppercase mt-4">Cancel</button>
     </div>
 </div>
 
@@ -146,29 +156,42 @@ function toggleCart() {
 
 function showPaymentQR() {
     const total = cart.reduce((s, i) => s + i.price, 0);
-    const upiLink = `upi://pay?pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order-QR`;
+    const upiLink = `upi://pay?pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order`;
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
-    
     document.getElementById('qr-display').innerHTML = `<img src="${qrUrl}" class="mx-auto rounded-lg">`;
+    document.getElementById('qr-step-1').classList.remove('hidden');
+    document.getElementById('qr-step-2').classList.add('hidden');
     document.getElementById('qr-modal').classList.remove('hidden');
 }
 
-function closeQR() {
-    document.getElementById('qr-modal').classList.add('hidden');
-    saveOrderData("Paid via QR (Manual)");
+function showTransactionInput() {
+    document.getElementById('qr-step-1').classList.add('hidden');
+    document.getElementById('qr-step-2').classList.remove('hidden');
+}
+
+function validateAndCloseQR() {
+    const utr = document.getElementById('utr-input').value;
+    if(utr.length < 8) { alert("Enter valid Transaction ID"); return; }
+    
+    saveOrderData("Pending Verification", utr);
+    closeQRModal();
     document.getElementById('checkout-modal').classList.add('hidden');
+    cart = [];
+    document.getElementById('cart-count').innerText = "0";
     toggleHistory();
+}
+
+function closeQRModal() {
+    document.getElementById('qr-modal').classList.add('hidden');
+    document.getElementById('utr-input').value = "";
 }
 
 function initiatePayment(e) {
     e.preventDefault();
     const total = cart.reduce((s, i) => s + i.price, 0);
-    const orderID = 'SR-' + Math.floor(1000 + Math.random() * 9000);
-    const upiParams = `pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order-${orderID}&mc=0000&mode=02`;
-    
-    saveOrderData("Payment Initiated");
+    const upiParams = `pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order`;
+    saveOrderData("Payment Initiated", "App Payment");
     window.location.href = `tez://upi/pay?${upiParams}`;
-
     setTimeout(() => {
         document.getElementById('checkout-modal').classList.add('hidden');
         cart = [];
@@ -177,7 +200,7 @@ function initiatePayment(e) {
     }, 1500);
 }
 
-function saveOrderData(status) {
+function saveOrderData(status, tracking) {
     const total = cart.reduce((s, i) => s + i.price, 0);
     const orderID = 'SR-' + Math.floor(1000 + Math.random() * 9000);
     const orderData = {
@@ -186,7 +209,7 @@ function saveOrderData(status) {
         items: cart.map(i => i.name).join(", "),
         date: new Date().toLocaleDateString(),
         status: status,
-        tracking: "Verifying payment...",
+        tracking: tracking,
         customer: fullUserPhone
     };
     let history = JSON.parse(localStorage.getItem('orders_' + fullUserPhone)) || [];
@@ -210,6 +233,7 @@ function renderHistory() {
                 <span class="text-[10px] font-bold px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full uppercase">${o.status}</span>
             </div>
             <p class="text-sm font-bold text-stone-800">${o.items}</p>
+            <p class="text-[10px] text-stone-400 mt-2 italic">Ref: ${o.tracking}</p>
             <div class="flex justify-between items-center pt-4 border-t mt-4 border-stone-200">
                 <span class="text-xl font-black">${o.total}</span>
                 <div class="flex gap-2">
