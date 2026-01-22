@@ -77,7 +77,11 @@
             <input name="Customer_Phone" id="form-phone" readonly class="w-full mb-3 p-2 bg-gray-100 border rounded font-mono text-gray-500">
             <input required name="Full_Name" placeholder="Recipient Name" class="w-full mb-3 p-2 border rounded outline-none">
             <input name="Address" id="address-input" required placeholder="Shipping Address" class="w-full mb-4 p-2 border rounded outline-none focus:ring-2 focus:ring-orange-500">
-            <button type="submit" class="w-full bg-green-700 text-white py-4 rounded-lg font-bold text-lg hover:bg-green-800 shadow-lg">Pay ₹<span id="btn-total">0</span> via GPay</button>
+            
+            <button type="submit" class="w-full bg-green-700 text-white py-4 rounded-lg font-bold text-lg hover:bg-green-800 shadow-lg transition transform active:scale-95">
+                Pay ₹<span id="btn-total">0</span> via GPay/UPI
+            </button>
+            
             <button type="button" onclick="toggleCart()" class="w-full mt-3 text-gray-400 text-sm font-bold">Cancel</button>
         </form>
     </div>
@@ -85,14 +89,14 @@
 
 <div id="confirmation-page" class="hidden min-h-screen flex items-center justify-center bg-green-50 p-6">
     <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-t-8 border-green-600">
-        <h2 class="text-3xl font-bold text-green-700 mb-4">🎉 Order Recorded!</h2>
-        <p class="text-gray-600 mb-6 text-sm">The GPay app should have opened. If not, please complete the transfer in your app.</p>
+        <h2 class="text-3xl font-bold text-green-700 mb-4">✅ Order Recorded</h2>
+        <p class="text-gray-600 mb-6 text-sm">Payment app should have opened. Once paid, your order will be verified.</p>
         <div class="border rounded-xl p-5 text-left text-sm mb-6 bg-gray-50 border-gray-200">
             <p><strong>Order ID:</strong> <span id="conf-order"></span></p>
-            <p><strong>Total Amount:</strong> ₹<span id="conf-total"></span></p>
-            <p><strong>Status:</strong> Awaiting Verification</p>
+            <p><strong>Total:</strong> ₹<span id="conf-total"></span></p>
+            <p><strong>Status:</strong> Verification Pending</p>
         </div>
-        <button onclick="location.reload()" class="w-full bg-orange-700 text-white px-6 py-3 rounded-xl font-bold">Back to Store</button>
+        <button onclick="location.reload()" class="w-full bg-orange-700 text-white px-6 py-3 rounded-xl font-bold">Return Home</button>
     </div>
 </div>
 
@@ -101,6 +105,7 @@ let cart = [];
 let userPhone = "";
 
 const BUSINESS_CONTACT = "919029523782"; 
+const MY_GPAY_ID = "sharayuj66@oksbi";
 
 function handleLogin() {
     const p = document.getElementById('login-phone-input').value;
@@ -115,7 +120,7 @@ function handleLogin() {
 function addToCart(name, price) {
     cart.push({ name, price });
     document.getElementById('cart-count').innerText = cart.length;
-    alert(name + " added to cart!");
+    alert(name + " added!");
 }
 
 function toggleCart() {
@@ -135,8 +140,8 @@ function initiatePayment(e) {
     const total = cart.reduce((s, i) => s + i.price, 0);
     const orderID = 'SR-' + Date.now().toString().slice(-5);
     
-    const myGpayId = "sharayuj66@oksbi"; 
-    const upiUrl = `upi://pay?pa=${myGpayId}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order-${orderID}`;
+    // THE UPI LINK FIX
+    const upiUrl = `upi://pay?pa=${MY_GPAY_ID}&pn=SpiceRoute&mc=&tid=&tr=${orderID}&tn=SpiceRoute%20Order%20${orderID}&am=${total}&cu=INR`;
 
     const orderData = {
         id: orderID,
@@ -151,9 +156,10 @@ function initiatePayment(e) {
     history.push(orderData);
     localStorage.setItem('orders_' + userPhone, JSON.stringify(history));
 
-    // Opens GPay on Mobile
+    // Force open the UPI app
     window.location.href = upiUrl;
 
+    // Transition to success screen after a delay
     setTimeout(() => {
         document.getElementById('checkout-modal').classList.add('hidden');
         document.querySelector('nav').style.display = 'none';
@@ -162,7 +168,7 @@ function initiatePayment(e) {
         document.getElementById('confirmation-page').classList.remove('hidden');
         document.getElementById('conf-order').innerText = orderID;
         document.getElementById('conf-total').innerText = total;
-    }, 1500);
+    }, 2000);
 }
 
 function showAdmin() {
@@ -178,7 +184,7 @@ function showAdmin() {
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h3 class="text-xl font-bold text-orange-900">${o.id}</h3>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${o.date}</p>
+                    <p class="text-xs text-gray-400 font-bold">${o.date}</p>
                 </div>
                 <div class="text-right">
                     <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-orange-100 text-orange-700">${o.status}</span>
@@ -186,15 +192,15 @@ function showAdmin() {
                 </div>
             </div>
             <div class="space-y-4 border-t pt-4">
-                <p class="text-sm text-gray-700 font-medium">Items: ${o.items}</p>
+                <p class="text-sm text-gray-700">Items: ${o.items}</p>
                 <div class="bg-stone-50 p-4 rounded-lg border border-stone-100">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Live Tracking</p>
                     <p class="text-sm text-orange-700 font-bold">${o.tracking}</p>
                 </div>
             </div>
             <div class="mt-6 flex gap-3">
-                <a href="tel:+${BUSINESS_CONTACT}" class="flex-1 bg-orange-800 text-white text-center py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest">📞 Call</a>
-                <a href="https://wa.me/${BUSINESS_CONTACT}?text=Query Order ${o.id}" class="flex-1 border-2 border-orange-800 text-orange-800 text-center py-3 rounded-lg text-[10px] font-bold uppercase tracking-widest">💬 WhatsApp</a>
+                <a href="tel:+${BUSINESS_CONTACT}" class="flex-1 bg-orange-800 text-white text-center py-3 rounded-lg text-[10px] font-bold uppercase">📞 Call</a>
+                <a href="https://wa.me/${BUSINESS_CONTACT}?text=Query Order ${o.id}" class="flex-1 border-2 border-orange-800 text-orange-800 text-center py-3 rounded-lg text-[10px] font-bold uppercase">💬 WhatsApp</a>
             </div>
         </div>`).join('') : '<p class="text-center text-gray-400 italic py-20">No orders found.</p>';
 }
