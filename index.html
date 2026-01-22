@@ -87,15 +87,15 @@ function initiatePayment(e) {
     const total = cart.reduce((s, i) => s + i.price, 0);
     const orderID = 'SR' + Date.now().toString().slice(-6);
 
-    // --- THE FIX: GOOGLE PAY DIRECT INTENT ---
-    // This format is designed to trigger GPay specifically on Android and iOS.
-    const gpayUrl = `tez://upi/pay?pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order-${orderID}`;
-    const fallbackUpi = `upi://pay?pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=Order-${orderID}`;
+    // --- UPDATED PAYMENT LINK FOR CURRENCY & LIMIT FIX ---
+    // Added mc=0000 and cu=INR specifically to handle bank limits
+    const upiParams = `pa=${MY_GPAY_ID}&pn=SpiceRoute&am=${total}&cu=INR&tn=SpiceRoute-Order-${orderID}&mc=0000&mode=02`;
+    
+    const gpayUrl = `tez://upi/pay?${upiParams}`;
+    const fallbackUpi = `upi://pay?${upiParams}`;
 
-    // Try to force GPay (Tez) first
     window.location.href = gpayUrl;
 
-    // If GPay doesn't open in 500ms, try standard UPI as backup
     setTimeout(() => {
         if (document.hasFocus()) {
             window.location.href = fallbackUpi;
