@@ -5,97 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slow-Ground | Stone-Pounded Spices</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --laterite: #b04a33; --basalt: #1c1c1c; --clay: #f4f1ee; }
-        body { font-family: 'Space Grotesk', sans-serif; background-color: var(--clay); color: var(--basalt); overflow-x: hidden; }
-        .serif { font-family: 'Playfair Display', serif; }
-        .glass { background: rgba(244, 241, 238, 0.96); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        input, textarea { border-radius: 0 !important; border-bottom: 1px solid #000 !important; border-top: none !important; border-left: none !important; border-right: none !important; background: transparent !important; }
-        input:focus { border-color: var(--laterite) !important; outline: none; }
-        /* Smooth transitions for mobile taps */
-        .tap-target { transition: opacity 0.2s ease; }
-        .tap-target:active { opacity: 0.6; }
+        :root { --accent: #8b5e3c; --dark: #1a1a1a; --cream: #f9f7f2; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--cream); color: var(--dark); overflow-x: hidden; }
+        .serif { font-family: 'Marcellus', serif; }
+        
+        /* Fixed, Professional Image Sizing */
+        .product-card img { height: 240px; width: 100%; object-fit: cover; border-radius: 4px; }
+        
+        /* Modern UI Elements */
+        .glass { background: rgba(249, 247, 242, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        input, textarea { border-bottom: 1.5px solid rgba(0,0,0,0.1) !important; background: transparent !important; outline: none !important; border-radius: 0 !important; }
+        input:focus { border-color: var(--accent) !important; }
+        
+        .btn-main { background: var(--dark); color: white; transition: 0.3s; }
+        .btn-main:hover { background: var(--accent); }
+
+        /* Centered Success Overlay */
+        #success-overlay { display: none; background: rgba(0,0,0,0.95); color: white; position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body class="antialiased">
 
-<div id="login-modal" class="fixed inset-0 bg-[#f4f1ee] z-[200] flex flex-col items-center justify-center p-6 text-center">
-    <div class="max-w-xs w-full space-y-10">
-        <h2 class="text-4xl md:text-5xl serif italic tracking-tighter">Slow-Ground</h2>
+<div id="login-modal" class="fixed inset-0 bg-[#f9f7f2] z-[200] flex items-center justify-center p-6 text-center">
+    <div class="max-w-sm w-full space-y-8">
+        <h2 class="text-5xl serif">Founder’s 750</h2>
+        <p class="text-[10px] uppercase tracking-[0.4em] opacity-50 italic">Ancestral Masalas</p>
         <div class="space-y-6">
-            <input id="login-phone-input" type="tel" placeholder="Mobile Number" class="w-full font-bold text-center text-lg pb-4">
-            <button onclick="handleLogin()" class="w-full bg-stone-900 text-white py-5 font-bold text-[10px] uppercase tracking-[0.4em]">Login</button>
+            <input id="login-phone-input" type="tel" placeholder="ENTER MOBILE NUMBER" class="w-full text-center text-xl pb-2 font-bold tracking-widest">
+            <button onclick="handleLogin()" class="btn-main w-full py-5 text-[11px] font-bold uppercase tracking-widest">Enter the Shop</button>
         </div>
     </div>
 </div>
 
-<nav class="glass sticky top-0 z-50 border-b border-stone-200 px-4 md:px-8 py-4 md:py-6">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="cursor-pointer" onclick="location.reload()">
-            <h1 class="text-base md:text-xl font-bold tracking-tighter uppercase leading-none">Slow-<br class="md:hidden">Ground</h1>
-        </div>
-        <div class="flex items-center gap-3 md:gap-12">
-            <button onclick="toggleHistory()" class="text-[9px] md:text-[10px] font-bold tracking-widest uppercase border-b border-stone-900 pb-1 tap-target">Orders</button>
-            <div class="flex flex-col items-end border-l border-stone-300 pl-3 md:pl-8">
-                <span class="text-[7px] md:text-[8px] font-bold text-stone-400 uppercase tracking-widest leading-none">Logged In</span>
-                <span id="user-display-id" class="text-[9px] md:text-[10px] font-bold text-stone-900 tracking-widest">+91 0000...</span>
-            </div>
-            <button onclick="toggleCart()" class="text-[9px] md:text-[10px] font-bold tracking-widest uppercase bg-stone-900 text-white px-3 md:px-4 py-2 tap-target">Cart (<span id="cart-count">0</span>)</button>
+<div id="success-overlay">
+    <div class="p-8 max-w-sm">
+        <div class="text-6xl mb-6 text-green-500">✓</div>
+        <h2 class="serif text-4xl mb-4 tracking-widest">SUCCESS</h2>
+        <p id="success-text" class="text-sm tracking-wide leading-relaxed font-light"></p>
+        <button onclick="location.reload()" class="mt-8 border border-white px-8 py-3 text-[10px] uppercase font-bold tracking-widest hover:bg-white hover:text-black transition-colors">Return to Shop</button>
+    </div>
+</div>
+
+<nav class="glass sticky top-0 z-50 px-6 py-5 border-b border-stone-100">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <h1 class="text-2xl serif uppercase tracking-tighter cursor-pointer" onclick="location.reload()">Founder’s 750</h1>
+        <div class="flex items-center gap-6">
+            <p id="user-display-id" class="hidden md:block text-[9px] font-bold opacity-40 uppercase tracking-widest">...</p>
+            <button onclick="toggleHistory()" class="text-[10px] font-bold uppercase tracking-widest hover:text-orange-900">My Orders</button>
+            <button onclick="toggleCart()" class="btn-main px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest shadow-xl">
+                Cart (<span id="cart-count">0</span>)
+            </button>
         </div>
     </div>
 </nav>
 
-<main class="max-w-7xl mx-auto px-6 md:px-8 py-12 md:py-24">
-    <header class="mb-16 md:mb-32">
-        <h2 class="text-5xl md:text-8xl serif italic leading-[1.1] md:leading-[0.9] tracking-tighter">
-            Pounded <span class="text-[#b04a33]">Slow.</span><br>Earthy Soul.
-        </h2>
-    </header>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-        <div class="group cursor-pointer" onclick="addToCart('Everyday Magic', 1050)">
-            <div class="aspect-[4/5] bg-stone-200 mb-6 md:mb-8 overflow-hidden">
-                <img src="everyday-magic.jpg" alt="Spice Pack" class="w-full h-full object-cover grayscale md:group-hover:grayscale-0 transition-all duration-700">
+<main class="max-w-6xl mx-auto px-6 py-12 md:py-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div class="product-card group bg-white p-5 rounded border border-stone-100 shadow-sm">
+            <div class="overflow-hidden mb-5">
+                <img src="everyday-magic.jpg" alt="Everyday Magic" class="group-hover:scale-105 transition-transform duration-700">
             </div>
-            <div class="flex justify-between items-baseline mb-2">
-                <h3 class="text-2xl md:text-3xl font-bold uppercase tracking-tighter">Everyday Magic</h3>
-                <span class="text-xl md:text-2xl">1050</span>
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="serif text-xl uppercase">Everyday Magic</h3>
+                <span class="text-lg font-semibold">₹1050</span>
             </div>
-            <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#b04a33] mb-6">Teja Chilli • 750g</p>
-            <button class="w-full py-4 border border-stone-900 text-[10px] font-bold uppercase tracking-[0.4em] tap-target">Add to Cart</button>
+            <p class="text-[10px] font-bold text-stone-400 mb-5 uppercase tracking-widest">Quantity: 750 GM</p>
+            <button onclick="addToCart('Everyday Magic', 1050)" class="w-full py-3 border border-stone-200 text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 hover:text-white transition-all">Add to Cart</button>
         </div>
 
-        <div class="group cursor-pointer" onclick="addToCart('Garam Masala', 950)">
-            <div class="aspect-[4/5] bg-stone-200 mb-6 md:mb-8 overflow-hidden">
-                <img src="garam-masala.jpg" alt="Spice Blend" class="w-full h-full object-cover grayscale md:group-hover:grayscale-0 transition-all duration-700">
+        <div class="product-card group bg-white p-5 rounded border border-stone-100 shadow-sm">
+            <div class="overflow-hidden mb-5">
+                <img src="garam-masala.jpg" alt="Garam Masala" class="group-hover:scale-105 transition-transform duration-700">
             </div>
-            <div class="flex justify-between items-baseline mb-2">
-                <h3 class="text-2xl md:text-3xl font-bold uppercase tracking-tighter">Garam Masala</h3>
-                <span class="text-xl md:text-2xl">950</span>
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="serif text-xl uppercase">Garam Masala</h3>
+                <span class="text-lg font-semibold">₹950</span>
             </div>
-            <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-[#b04a33] mb-6">Heirloom Blend • 750g</p>
-            <button class="w-full py-4 border border-stone-900 text-[10px] font-bold uppercase tracking-[0.4em] tap-target">Add to Cart</button>
+            <p class="text-[10px] font-bold text-stone-400 mb-5 uppercase tracking-widest">Quantity: 750 GM</p>
+            <button onclick="addToCart('Garam Masala', 950)" class="w-full py-3 border border-stone-200 text-[10px] font-bold uppercase tracking-widest hover:bg-stone-900 hover:text-white transition-all">Add to Cart</button>
         </div>
     </div>
 </main>
 
 <div id="checkout-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-[140] flex justify-end">
-    <div class="bg-white w-full md:max-w-md h-full p-8 md:p-10 flex flex-col shadow-2xl">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold uppercase tracking-tighter">Cart</h2>
-            <button onclick="toggleCart()" class="text-3xl leading-none">&times;</button>
+    <div class="bg-[#f9f7f2] w-full md:max-w-md h-full p-8 flex flex-col shadow-2xl overflow-y-auto">
+        <div class="flex justify-between items-center mb-8 border-b pb-4">
+            <h2 class="text-2xl serif uppercase tracking-widest">My Selection</h2>
+            <button onclick="toggleCart()" class="text-3xl">&times;</button>
         </div>
-        <div id="cart-items" class="flex-1 space-y-4 overflow-y-auto no-scrollbar"></div>
-        <div class="border-t pt-8 mt-4 space-y-6">
+        
+        <div id="cart-items" class="flex-1 space-y-4 no-scrollbar"></div>
+        
+        <div id="checkout-form-area" class="pt-8 space-y-6">
             <div id="cart-total-display"></div>
-            <form onsubmit="event.preventDefault(); startPaymentFlow();" class="space-y-4">
-                <input required id="cust-name" placeholder="FULL NAME" class="w-full py-3 text-[10px] font-bold uppercase tracking-widest">
-                <textarea required id="cust-addr" placeholder="SHIPPING ADDRESS" class="w-full py-3 text-[10px] uppercase tracking-widest h-20"></textarea>
-                <button type="submit" id="proceed-btn" class="w-full bg-stone-900 text-white py-5 font-bold uppercase tracking-[0.4em] text-[10px]">Proceed to Pay</button>
-            </form>
+            
+            <div class="space-y-4">
+                <div class="bg-white p-4 border border-stone-100">
+                    <label class="text-[9px] font-bold uppercase opacity-40 block mb-1">User ID / Mobile</label>
+                    <div class="flex items-center gap-3">
+                        <input id="cust-phone-input" class="text-sm font-bold border-none p-0 flex-1" readonly>
+                        <button id="edit-phone-btn" onclick="togglePhoneEdit()" class="text-[10px] font-bold text-orange-800 uppercase underline">Change</button>
+                    </div>
+                </div>
+
+                <input required id="cust-name" placeholder="FULL NAME" class="w-full py-3 text-sm font-medium">
+                <textarea required id="cust-addr" placeholder="COMPLETE SHIPPING ADDRESS" class="w-full py-3 text-sm font-medium h-20"></textarea>
+                <button onclick="startPaymentFlow()" class="btn-main w-full py-5 text-[11px] font-bold uppercase tracking-widest">Continue to Pay</button>
+            </div>
         </div>
+    </div>
+</div>
+
+<footer class="bg-stone-900 text-stone-300 py-16 px-6 mt-20">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div>
+            <h4 class="serif text-white text-3xl mb-6">Founder’s 750</h4>
+            <p class="text-xs leading-relaxed max-w-sm opacity-60">Small batch, hand-selected, and stone-pounded spices delivered from our kitchen to yours.</p>
+        </div>
+        <div class="space-y-6">
+            <p class="text-[11px] font-bold uppercase tracking-widest text-white">Support & Admin</p>
+            <p class="text-lg font-bold">9892259949</p>
+            <div class="flex gap-6">
+                <a href="tel:9892259949" class="text-[10px] font-bold uppercase border-b border-white pb-1">Call Admin</a>
+                <a href="https://wa.me/919892259949" target="_blank" class="text-[10px] font-bold uppercase border-b border-green-500 text-green-500 pb-1">WhatsApp Message</a>
+            </div>
+        </div>
+    </div>
+    <div class="max-w-6xl mx-auto mt-16 pt-8 border-t border-stone-800 flex justify-between text-[9px] uppercase tracking-widest opacity-40">
+        <p>© 2026 Founder’s 750 Spices</p>
+        <button onclick="changeUser()" class="underline">Logout Session</button>
+    </div>
+</footer>
+
+<div id="history-modal" class="fixed inset-0 bg-[#f9f7f2] hidden z-[150] flex flex-col items-center p-8 overflow-y-auto">
+    <div class="max-w-xl w-full">
+        <div class="flex justify-between items-center mb-10 border-b pb-4">
+            <h2 class="text-2xl serif uppercase tracking-widest">Order History</h2>
+            <button onclick="toggleHistory()" class="text-[10px] font-bold border px-5 py-2">Close</button>
+        </div>
+        <div id="history-list" class="space-y-6"></div>
     </div>
 </div>
 
@@ -105,37 +155,147 @@ const MY_GPAY_ID = "sharayuj66@oksbi";
 let cart = [];
 let fullUserPhone = "";
 
+// LOGIN LOGIC
 function handleLogin() {
     const phone = document.getElementById('login-phone-input').value;
     if(phone.length >= 10) {
         fullUserPhone = phone.includes("+91") ? phone.trim() : "+91" + phone.trim();
         localStorage.setItem('slowGround_User', fullUserPhone);
-        document.getElementById('user-display-id').innerText = fullUserPhone.slice(0, 7) + "...";
+        updateUserUI(fullUserPhone);
         document.getElementById('login-modal').classList.add('hidden');
     }
 }
+function updateUserUI(phone) {
+    fullUserPhone = phone;
+    document.getElementById('user-display-id').innerText = "ID: " + phone;
+    document.getElementById('cust-phone-input').value = phone;
+}
+function changeUser() { localStorage.removeItem('slowGround_User'); location.reload(); }
 
+// EDIT PHONE IN CART
+function togglePhoneEdit() {
+    const input = document.getElementById('cust-phone-input');
+    const btn = document.getElementById('edit-phone-btn');
+    if(input.hasAttribute('readonly')) {
+        input.removeAttribute('readonly');
+        input.focus();
+        btn.innerText = "Save";
+        input.style.borderBottom = "1px solid black";
+    } else {
+        fullUserPhone = input.value;
+        localStorage.setItem('slowGround_User', fullUserPhone);
+        input.setAttribute('readonly', true);
+        btn.innerText = "Change";
+        updateUserUI(fullUserPhone);
+    }
+}
+
+// CART FUNCTIONS
 function addToCart(name, price) {
-    cart.push({ name, price });
+    cart.push({ name, price, qty: '750 GM' });
     document.getElementById('cart-count').innerText = cart.length;
 }
 
 function toggleCart() {
     if (cart.length === 0 && document.getElementById('checkout-modal').classList.contains('hidden')) return alert("Cart is empty.");
-    document.getElementById('cart-items').innerHTML = cart.map(i => `<div class="flex justify-between text-[10px] py-3 border-b uppercase font-bold tracking-widest"><span>${i.name}</span><span>₹${i.price}</span></div>`).join('');
-    document.getElementById('cart-total-display').innerHTML = `<div class="flex justify-between items-center text-lg font-bold uppercase tracking-tighter"><span>Total</span><span>₹${cart.reduce((s,i) => s+i.price, 0)}</span></div>`;
+    renderCart();
     document.getElementById('checkout-modal').classList.toggle('hidden');
+}
+
+function renderCart() {
+    document.getElementById('cart-items').innerHTML = cart.map((i, idx) => `
+        <div class="flex justify-between items-center pb-4 border-b border-stone-200">
+            <div>
+                <p class="font-bold text-xs uppercase">${i.name}</p>
+                <p class="text-[9px] opacity-50 uppercase tracking-widest">${i.qty}</p>
+                <button onclick="removeFromCart(${idx})" class="text-[9px] text-red-700 font-bold uppercase underline">Remove</button>
+            </div>
+            <p class="text-sm font-bold">₹${i.price}</p>
+        </div>`).join('');
+    const total = cart.reduce((s,i) => s+i.price, 0);
+    document.getElementById('cart-total-display').innerHTML = `<div class="flex justify-between font-bold text-2xl serif pb-2 uppercase tracking-tighter"><span>Total</span><span>₹${total}</span></div>`;
+}
+
+function removeFromCart(idx) {
+    cart.splice(idx, 1);
+    document.getElementById('cart-count').innerText = cart.length;
+    if(cart.length === 0) document.getElementById('checkout-modal').classList.add('hidden');
+    else renderCart();
+}
+
+// PAYMENT FLOW
+async function startPaymentFlow() {
+    const name = document.getElementById('cust-name').value;
+    const addr = document.getElementById('cust-addr').value;
+    const total = cart.reduce((s,i) => s+i.price, 0);
+    if(!name || !addr) return alert("Details required.");
+
+    const upiUrl = `upi://pay?pa=${MY_GPAY_ID}&pn=SlowGround&am=${total}&cu=INR`;
+    const qrImage = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+
+    document.getElementById('checkout-form-area').innerHTML = `
+        <div class="text-center space-y-5">
+            <p class="text-[10px] font-bold text-orange-900 uppercase tracking-[0.2em] bg-orange-50 py-2">GPay / PhonePe / UPI Payment</p>
+            <div class="bg-white p-3 inline-block border rounded shadow-md"><img id="qr-img" src="${qrImage}" class="w-48 h-48 mx-auto"></div>
+            <a href="${qrImage}" download="SlowGround_QR.png" class="block text-[10px] font-bold text-stone-500 uppercase underline">Download QR Image</a>
+            <p class="text-[11px] font-bold uppercase opacity-60">Scan to pay ₹${total}</p>
+            <input id="utr-no" placeholder="ENTER TRANSACTION REF NO." class="w-full text-center text-sm pb-2 font-black border-b border-black uppercase">
+            <button id="final-confirm" class="btn-main w-full py-5 text-[11px] font-bold uppercase tracking-widest">Submit Payment</button>
+            <button onclick="location.reload()" class="text-[9px] uppercase font-bold opacity-30">Back</button>
+        </div>`;
+
+    document.getElementById('final-confirm').onclick = async function() {
+        const utr = document.getElementById('utr-no').value;
+        if(!utr) return alert("UTR/Transaction ID is required.");
+        this.innerText = "Processing...";
+        
+        const orderData = { 
+            customer: name, 
+            phone: fullUserPhone, 
+            address: addr, 
+            items: cart.map(i=>`${i.name} (${i.qty})`).join(", "), 
+            total: "₹"+total, 
+            utr: utr, 
+            date: new Date().toLocaleDateString() 
+        };
+        
+        await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        let history = JSON.parse(localStorage.getItem('slowGround_History') || '[]');
+        history.push(orderData);
+        localStorage.setItem('slowGround_History', JSON.stringify(history));
+        
+        // SHOW FULL SCREEN SUCCESS
+        document.getElementById('success-text').innerText = `Order sent to the kitchen. Transaction Ref ${utr} recorded.`;
+        document.getElementById('success-overlay').style.display = 'flex';
+    };
+}
+
+// HISTORY
+function toggleHistory() {
+    const modal = document.getElementById('history-modal');
+    if(modal.classList.contains('hidden')) {
+        const history = JSON.parse(localStorage.getItem('slowGround_History') || '[]');
+        document.getElementById('history-list').innerHTML = history.length ? history.map(h => `
+            <div class="p-5 bg-white border border-stone-200 rounded">
+                <div class="flex justify-between text-[9px] font-bold opacity-40 mb-2 uppercase"><span>${h.date}</span><span>REF: ${h.utr}</span></div>
+                <h4 class="serif text-lg font-bold uppercase tracking-wider">${h.items}</h4>
+                <p class="text-[11px] font-bold uppercase mt-2 text-orange-900">${h.total} • Processing</p>
+            </div>`).join('') : '<p class="text-center opacity-40 py-20 uppercase text-[10px] font-bold">No previous orders.</p>';
+    }
+    modal.classList.toggle('hidden');
 }
 
 window.onload = () => {
     const saved = localStorage.getItem('slowGround_User');
     if(saved) {
-        fullUserPhone = saved;
-        document.getElementById('user-display-id').innerText = fullUserPhone.slice(0, 7) + "...";
+        updateUserUI(saved);
         document.getElementById('login-modal').classList.add('hidden');
     }
 };
 </script>
-
 </body>
 </html>
